@@ -37,14 +37,12 @@ class UserLogin extends Controller
     
             }
         }else{
-
+            /**
+             * returning users
+             */
             $maker = new AuthController();
-            // error_log($request);
-            $res = $maker->login($request); 
-            $val = $this->_accessProtected($res, 'content');
-            return $val;
-            // dd($val);
-            return ["true"];
+            $obj = json_decode($this->_accessProtected($maker->login($request), 'content'));
+            return array_merge((array)$obj, array('status' => '22'));
         }
 
 
@@ -63,8 +61,8 @@ class UserLogin extends Controller
         ]);
 
         $maker = new AuthController();
-        return $maker->login($request);
-        // return response()->json(["status" => "22"]);
+        $obj = json_decode($this->_accessProtected($maker->login($request), 'content'));
+        return array_merge((array)$obj, array('status' => '22'));
 
        
     }

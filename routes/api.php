@@ -22,8 +22,10 @@ Route::middleware('auth:api')->group(function(){
     });
     Route::post('/logout', 'AuthController@logout');
 
-
+    
 });
+Route::post('setPassword', 'UserLogin@setPassword');
+Route::post('loginUser', 'UserLogin@memberLogin');
 Route::post('getUserState', 'User@memberState');
 Route::post('setContact', 'User@defineContact');
 Route::post('login', 'AuthController@login');

@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
+
 use App\User as RegisteredUser;
 use App\Bulwark\Member;
 use App\Pension\Member as PensionMember;
@@ -25,8 +25,14 @@ class User extends Controller
         if($registeredUsers){
             /**
              * registered users
+             * redirect to Login page
+             * 
              */
 
+      
+            return response()->json(["status" => "11"]);
+                
+             
         }else{
             /**
              * unregistered/ first time users

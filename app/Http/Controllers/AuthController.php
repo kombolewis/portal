@@ -9,14 +9,14 @@ use App\User;
 use App\Mail\WelcomeMail;
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login($request)
     {
-
+     
         $req = Request::create(config('services.passport.login_endpoint'), 'POST', [
             'grant_type' => 'password',
             'client_id' => config('services.passport.client_id'),
             'client_secret' => config('services.passport.client_secret'),  
-            'username' => $request->username,
+            'username' => $request->id_no,
             'password' => $request->password,
 
         ]);
@@ -41,7 +41,6 @@ class AuthController extends Controller
 
         $otp = bin2hex(openssl_random_pseudo_bytes(4));
 
-    //    $obj = collect($member);
         $create = User::create([
             'name' => $member->pluck('ALLNAMES')->first() ? $member->pluck('ALLNAMES')->first() : $member->ALLNAMES,
             'email' => $member->pluck('E_MAIL')->first() ? $member->pluck('E_MAIL')->first() : $member->E_MAIL,

@@ -6,5 +6,5 @@ Use this password <b>{{$otp}}</b> to Log in to your account.
 
 
 Thanks,<br>
-{{ config('app.name') }}
+Zimele Customer Service.
 @endcomponent

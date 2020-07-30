@@ -16,21 +16,25 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('auth:api')->group(function(){
-    
+    Route::post('/logout', 'Auth\AuthController@logout');
+
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    Route::post('/logout', 'AuthController@logout');
+    
+
+    Route::get('members', 'User\UserController@index');
+    Route::get('userInfo', 'User\UserController@authInfo');
+    Route::post('fetchTransactions', 'Accounts\StatementsController@index');
 
     
 });
-Route::post('setPassword', 'UserLogin@setPassword');
-Route::post('loginUser', 'UserLogin@memberLogin');
-Route::post('getUserState', 'User@memberState');
-Route::post('setContact', 'User@defineContact');
-Route::post('login', 'AuthController@login');
-Route::post('register', 'AuthController@register');
-Route::get('members', 'Test\TestController@index');
+Route::post('setPassword', 'Auth\UserLogin@setPassword');
+Route::post('loginUser', 'Auth\UserLogin@memberLogin');
+Route::post('getUserState', 'Auth\User@memberState');
+Route::post('setContact', 'Auth\User@defineContact');
+Route::get('testAccounts', 'User\UserController@getTraversingAccounts');
+
 
 
 

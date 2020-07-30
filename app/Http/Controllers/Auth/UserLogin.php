@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
+use App\Http\Controllers\Controller;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use App\User as RegisteredUser;
 use App\Bulwark\Member;
 use App\Pension\Member as PensionMember;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\AuthController;
 
 class UserLogin extends Controller
 {
@@ -33,7 +35,7 @@ class UserLogin extends Controller
             if(Hash::check($request->password, $registeredUsers->otp)){
                 return response()->json(["status" => "02"]);
             }else{
-                return response()->json("unknown error occurred");
+                return response()->json("passwords did not match");
     
             }
         }else{

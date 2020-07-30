@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
+use App\Http\Controllers\Controller;
+
 use Illuminate\Http\Request;
 
 use App\User as RegisteredUser;
 use App\Bulwark\Member;
 use App\Pension\Member as PensionMember;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\AuthController;
 
 class User extends Controller
 {
@@ -42,7 +44,7 @@ class User extends Controller
 
             $moneyMarketMember = Member::where('PIN_NO', $request->id_no)->get();
 
-            $pensionMember = PensionMember::where('PIN_NO', $request->id_no)->get();
+            $pensionMember = PensionMember::where('ID_NO', $request->id_no)->get();
 
             if($moneyMarketMember->isEmpty() && $pensionMember->isEmpty()){
                 /**
@@ -108,6 +110,7 @@ class User extends Controller
                      */
                     $maker = new AuthController();
                     $maker->register($moneyMarketMember);
+                    
                     return response()->json(["status" => "01"]);
 
 
@@ -119,7 +122,6 @@ class User extends Controller
                      * send only the  email and phone fields
                      * 
                      */
-                    error_log('money market casse');
 
                 
                     return $moneyMarketMember->map(function($item){
@@ -147,54 +149,35 @@ class User extends Controller
                  * find the number of accounts
                  */
 
-                if($moneyMarketMember->pluck('E_MAIL')->count() == 1) {
-                    /**
-                     * one account
-                     */
-                    $maker = new AuthController();
-                    $maker->register($moneyMarketMember);
-                    return response()->json(["status" => "01"]);
+                return $moneyMarketMember->map(function($item){
 
+                    $gsm = collect($item)->filter()->has('GSM_NO'); 
+                    $tel_no = collect($item)->filter()->has('TEL_NO');
 
-                } else{
-                    /**
-                     * Multiple accounts
-                     * ask the client to choose the email
-                     * send only the  email and phone fields
-                     * 
-                     */
-                    error_log('all positives casse');
-                    return $moneyMarketMember->map(function($item){
+                    if($gsm){
+                        return collect($item)->only(['E_MAIL','GSM_NO'])->all();
+                    }else if($tel_no){
+                        return collect($item)->only(['E_MAIL','TEL_NO'])->all();
+                    }else{
+                        return collect($item)->only(['E_MAIL'])->all();
 
-                        $gsm = collect($item)->filter()->has('GSM_NO'); 
-                        $tel_no = collect($item)->filter()->has('TEL_NO');
+                    }
+                    
+                })->concat($pensionMember->map(function($item){
 
-                        if($gsm){
-                            return collect($item)->only(['E_MAIL','GSM_NO'])->all();
-                        }else if($tel_no){
-                            return collect($item)->only(['E_MAIL','TEL_NO'])->all();
-                        }else{
-                            return collect($item)->only(['E_MAIL'])->all();
+                    $gsm = collect($item)->filter()->has('GSM_NO'); 
+                    $tel_no = collect($item)->filter()->has('TEL_NO');
 
-                        }
-                        
-                    })->merge($pensionMember->map(function($item){
+                    if($gsm){
+                        return collect($item)->only(['E_MAIL','GSM_NO'])->all();
+                    }else if($tel_no){
+                        return collect($item)->only(['E_MAIL','TEL_NO'])->all();
+                    }else{
+                        return collect($item)->only(['E_MAIL'])->all();
 
-                        $gsm = collect($item)->filter()->has('GSM_NO'); 
-                        $tel_no = collect($item)->filter()->has('TEL_NO');
-
-                        if($gsm){
-                            return collect($item)->only(['E_MAIL','GSM_NO'])->all();
-                        }else if($tel_no){
-                            return collect($item)->only(['E_MAIL','TEL_NO'])->all();
-                        }else{
-                            return collect($item)->only(['E_MAIL'])->all();
-
-                        }
-                        
-                    }));
-
-                }
+                    }
+                    
+                }));
 
             }
 
@@ -217,17 +200,26 @@ class User extends Controller
         ]);   
         
         $moneyMarketMember = Member::where('PIN_NO', $request->id_no)->where('E_MAIL', $request->contact)->get();
-        $pensionMember = PensionMember::where('PIN_NO', $request->id_no)->where('E_MAIL', $request->contact)->get();
+        $pensionMember = PensionMember::where('ID_NO', $request->id_no)->where('E_MAIL', $request->contact)->get();
         
-        // error_log(collect($moneyMarketMember)->pluck('ALLNAMES')->first());
+
 
         if($moneyMarketMember){
             $maker = new AuthController();
-            $maker->register($moneyMarketMember);
+
+            $optData = Member::where('PIN_NO', $request->id_no)->get()->concat(
+                PensionMember::where('ID_NO', $request->id_no)->get()
+            );
+            $maker->register($moneyMarketMember, $optData);
+            
             return response()->json(["status" => "01"]);
         }else{
             $maker = new AuthController();
-            $maker->register($pensionMember);
+            $optData = PensionMember::where('ID_NO', $request->id_no)->get()->concat(
+                Member::where('PIN_NO', $request->id_no)->get()
+            );
+            $maker->register($pensionMember, $optData);
+
             return response()->json(["status" => "01"]);   
         }
     }

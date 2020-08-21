@@ -518,7 +518,8 @@ class UserController extends Controller
         // return collect(collect($moneyMarket->pluck('PIN_NO'))->intersect($pension->pluck('ID_NO')))->filter(function ($value, $key) {
         //     return is_numeric($value);
         // });
-
+        // return Trans::where('PORTFOLIO', 'Balanced Fund')->limit(20)->get('MEMBER_NO');
+            
         $memberNosBf =  Trans::select('MEMBER_NO')->where('PORTFOLIO', 'Balanced Fund')->get();
         $matched = [];
         foreach($memberNosBf as $member){

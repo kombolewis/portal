@@ -26,6 +26,8 @@ Route::middleware('auth:api')->group(function(){
     Route::get('members', 'User\UserController@index');
     Route::get('userInfo', 'User\UserController@authInfo');
     Route::post('fetchTransactions', 'Accounts\StatementsController@index');
+    Route::post('fetchNav', 'Accounts\StatementsController@calculateNav');
+    Route::post('getPDFStatement', 'Accounts\PDFStatementController@generatePDF');
 
     
 });

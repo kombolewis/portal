@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Bulwark\Trans;
+use App\Bulwark\Nav as TransNav;
 use App\Pension\Trans as PensionTrans;
+use App\Pension\Nav as PensionNav;
 
 class StatementsController extends Controller
 {
@@ -21,7 +23,7 @@ class StatementsController extends Controller
         ]); 
         
         $this->_member_no = $request->member_no;
-        $this->portfolio = $request->portfolio;
+        $this->_portfolio = $request->portfolio;
         
         if($request->portfolio == 'Money Market')
 
@@ -29,7 +31,9 @@ class StatementsController extends Controller
 
         else if($request->portfolio == 'Balanced Fund')
 
+            // return $this->calculateNav();
             return $this->_fetchBFTrans();
+
 
         else if($request->portfolio == 'Zimele Guaranteed Pension Plan' || $request->portfolio == 'Zimele Guaranteed Personal Pension Plan' )
            
@@ -43,16 +47,16 @@ class StatementsController extends Controller
 
     private function _fetchMMTrans(){
         $acc_no =  Trans::select('ACCOUNT_NO')->where('MEMBER_NO', $this->_member_no)
-                                            ->orWhere('PORTFOLIO', $this->_portfolio)
+                                            ->where('PORTFOLIO', $this->_portfolio)
                                             ->orderBy('TRANS_DATE', 'DESC')
                                             ->pluck('ACCOUNT_NO')->first();
-
+        // return $acc_no;
         return Trans::where('ACCOUNT_NO', $acc_no)->get();
     }
 
     private function _fetchBFTrans(){
         $acc_no =  Trans::select('ACCOUNT_NO')->where('MEMBER_NO', $this->_member_no)
-                                            ->orWhere('PORTFOLIO', $this->_portfolio)
+                                            ->where('PORTFOLIO', $this->_portfolio)
                                             ->orderBy('TRANS_DATE', 'DESC')
                                             ->pluck('ACCOUNT_NO')->first();
 
@@ -63,7 +67,7 @@ class StatementsController extends Controller
 
     private function _fetchGPPTrans(){
         $acc_no =  PensionTrans::select('ACCOUNT_NO')->where('MEMBER_NO', $this->_member_no)
-                                    ->orWhere('PORTFOLIO', $this->_portfolio)
+                                    ->where('PORTFOLIO', $this->_portfolio)
                                     ->orderBy('TRANS_DATE', 'DESC')
                                     ->pluck('ACCOUNT_NO')->first();
 
@@ -72,11 +76,27 @@ class StatementsController extends Controller
     }
     private function _fetchPPTrans(){
         $acc_no =  PensionTrans::select('ACCOUNT_NO')->where('MEMBER_NO', $this->_member_no)
-                                                ->orWhere('PORTFOLIO', $this->_portfolio)
+                                                ->where('PORTFOLIO', $this->_portfolio)
                                                 ->orderBy('TRANS_DATE', 'DESC')
                                                 ->pluck('ACCOUNT_NO')->first();
 
         return PensionTrans::where('ACCOUNT_NO', $acc_no)->get();
     }
- 
+    
+    public function calculateNav(Request $request) {
+
+        $request->validate([
+            'portfolio' => 'required|string',
+        ]); 
+
+        if($request->portfolio == 'Balanced Fund')
+            return TransNav::select('AMOUNT')->orderBy('NAV_DATE', 'DESC')->pluck('AMOUNT')->first();
+
+        elseif($request->portfolio == 'Zimele Personal Pension Plan')
+            return PensionNav::select('AMOUNT')->orderBy('NAV_DATE', 'DESC')->pluck('AMOUNT')->first();
+            
+
+        
+    }  
+
 }

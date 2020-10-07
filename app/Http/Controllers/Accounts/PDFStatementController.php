@@ -31,26 +31,17 @@ class PDFStatementController extends Controller
                     "member_no" => $this->_member_no
                 ];
         
-        if($request->test){
-            return $this->testBF();
-        }
+
         $pdf = new PDFCreatorController($data);
         $pdf->SetFont('Helvetica', '',10);
         $pdf->AddPage();
         $pdf->outputControl();
-        return $pdf->Output();
-        // return base64_encode($pdf->Output('S'));
+        // return $pdf->Output();
+        return base64_encode($pdf->Output('S'));
         
         
     }
-    private function testBF(){
-        $acc_no =  Trans::select('ACCOUNT_NO')->where('MEMBER_NO', $this->_member_no)
-        ->where('PORTFOLIO', $this->_portfolio)
-        ->orderBy('TRANS_DATE', 'DESC')
-        ->pluck('ACCOUNT_NO')->first();
 
-        return Trans::where('ACCOUNT_NO', $acc_no)->get();
-    }
 
     private function _findAcc(){
         if($this->_portfolio == 'Money Market')
@@ -103,4 +94,5 @@ class PDFStatementController extends Controller
                                                 ->pluck('ACCOUNT_NO')->first();
 
     }
+    
 }

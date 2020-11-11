@@ -7,8 +7,8 @@ use AfricasTalking\SDK\AfricasTalking;
 class Sms
 {
     
-    private $_username = 'Zimele_UT';
-    private $_apiKey = 'cf3470d7c8c817d6d3f38a946f34dfa7a25fdc9e5252a64261e4b184683595e1';
+    private $_username = '';
+    private $_apiKey = '';
     private $_AT;
 
 

@@ -193,7 +193,7 @@ class AuthController extends Controller
 
                 $sender = new Sms();
                 // return $sender->sendSms($tel,$msg);
-                // return $sender->sendSms('0728822613',$msg);
+
             
             if($response)
                 return $response;

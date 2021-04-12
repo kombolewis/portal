@@ -1,7 +1,6 @@
 
 ## About 
 
-```
-Api endpoints for vueportal project.
-Check out https://projects.kombolewis.com/portal
-```
+<p>Api endpoints for vueportal project.</p>
+<p>Check out https://projects.kombolewis.com/portal </p>
+
